@@ -50,12 +50,12 @@
         }
         .contact-fields input:focus { border-color: #ffb100; }
 
-        /* ── Submit button ── */
+        /* ── WhatsApp submit button ── */
         .wa-btn {
             display: inline-flex;
             align-items: center;
             gap: 12px;
-            background: #06264d;
+            background: #25d366;
             color: #fff;
             padding: 16px 40px;
             border-radius: 10px;
@@ -67,7 +67,7 @@
             font-family: 'Poppins', sans-serif;
             text-decoration: none;
         }
-        .wa-btn:hover { background: #ffb100; transform: translateY(-2px); color:#fff; }
+        .wa-btn:hover { background: #128c4e; transform: translateY(-2px); color:#fff; }
         .wa-icon { font-size: 24px; }
 
         /* ── Form field labels ── */
@@ -175,7 +175,7 @@
     <!-- Top Bar -->
     <div class="topbar">
         <div class="container">
-            <span>✈️ Easy Online Booking — Instant Confirmation</span>
+            <span>📱 Book via WhatsApp — Instant Confirmation</span>
             <span>24/7 Customer Support</span>
         </div>
     </div>
@@ -208,9 +208,9 @@
         <div class="overlay"></div>
         <div class="container hero-content">
             <div class="hero-left">
-                <p class="subtitle">ONLINE BOOKING</p>
+                <p class="subtitle">WHATSAPP BOOKING</p>
                 <h1>Book Your Flight Instantly</h1>
-                <p>Fill in your flight details and our reservations team will confirm your booking shortly.</p>
+                <p>Fill in your flight details and we'll connect you directly with our reservations team on WhatsApp.</p>
             </div>
         </div>
     </section>
@@ -228,7 +228,7 @@
                     <span class="step-num">2</span>Your Info
                 </div>
                 <div class="step" id="step3-indicator">
-                    <span class="step-num">3</span>Confirm
+                    <span class="step-num">3</span>WhatsApp
                 </div>
             </div>
 
@@ -336,7 +336,7 @@
 
                     <div class="title" style="margin-bottom:40px;">
                         <h2>Your Details</h2>
-                        <p style="color:#666;">We need a few details to complete your booking.</p>
+                        <p style="color:#666;">We need your name and phone number to complete the booking on WhatsApp.</p>
                     </div>
 
                     <div class="contact-card">
@@ -350,9 +350,10 @@
                         </div>
                     </div>
 
+                    <!-- WhatsApp note -->
                     <div class="wa-note">
-                        <span class="wa-note-icon">📋</span>
-                        <span>Please review your booking summary below before confirming. Our reservations team will confirm your flight and send payment instructions within minutes.</span>
+                        <span class="wa-note-icon">💬</span>
+                        <span>Clicking <strong>Book via WhatsApp</strong> will open WhatsApp with all your booking details pre-filled. Our reservations team will confirm your flight and send payment instructions within minutes.</span>
                     </div>
 
                     <!-- Booking summary preview -->
@@ -364,7 +365,7 @@
                     <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
                         <button type="button" id="backBtn" class="button" style="background:#06264d;">← Back</button>
                         <button type="submit" class="wa-btn">
-                            <span class="wa-icon">✈️</span> Confirm Booking
+                            <span class="wa-icon">💬</span> Book via WhatsApp
                         </button>
                     </div>
 
@@ -377,7 +378,7 @@
     <!-- Why book with us -->
     <section class="destinations">
         <div class="container">
-            <div class="title"><h2>Why Book With Skyward?</h2></div>
+            <div class="title"><h2>Why Book Via WhatsApp?</h2></div>
             <div class="cards">
                 <div class="card">
                     <h3>⚡ Instant Response</h3>
@@ -385,7 +386,7 @@
                 </div>
                 <div class="card">
                     <h3>🔒 Safe & Secure</h3>
-                    <p>Your personal and payment details are handled with full privacy and care.</p>
+                    <p>End-to-end encrypted conversations keep your details private.</p>
                 </div>
                 <div class="card">
                     <h3>✅ Flexible Changes</h3>
@@ -421,11 +422,11 @@
 
     <script>
     /*========================================================
-     SKYWARD AIRLINES — Flight Booking Script
-     Reservations: +254785871084
+     SKYWARD AIRLINES — WhatsApp Booking Script
+     Agent WhatsApp: +254785871084
     =========================================================*/
 
-    const RESERVATIONS = "254785871084";
+    const WHATSAPP_NUMBER = "254785871084";
 
     const airports = [
         "Nairobi — Jomo Kenyatta Intl (NBO)",
@@ -459,7 +460,7 @@
                     const item = document.createElement("div");
                     item.className = "airport-item";
                     item.textContent = a;
-                    item.onclick = () => { input.value = a; list.innerHTML = ""; };
+                    item.onclick = () => { input.value = a; list.innerHTML = ""; updateFare(); };
                     list.appendChild(item);
                 });
         });
@@ -490,13 +491,81 @@
     }
 
     /* ── Fare calculator ── */
-    const fareBase = { "Economy": 5500, "Premium Economy": 7400, "Business": 11000, "First Class": 16500 };
+    // Route fares from Skyward Express fare guide (Economy one-way base)
+    // Where fares from the guide range would match another route, we subtract 1 to keep each unique
+    const routeFares = {
+
+        // ── Nairobi Wilson (WIL) departures ──
+        "WIL|MBA": 6500,   "MBA|WIL": 6500,   // KES 6,500–9,500  → 6500
+        "WIL|EDL": 6800,   "EDL|WIL": 6800,   // KES 6,500–9,000  → 6800 (differs from WIL|MBA)
+        "WIL|LOK": 9500,   "LOK|WIL": 9500,   // KES 9,500–14,000 → 9500
+        "WIL|MYD": 7200,   "MYD|WIL": 7200,   // KES 6,500–8,500  → 7200
+        "WIL|LAU": 8800,   "LAU|WIL": 8800,   // KES 8,500–12,000 → 8800
+        "WIL|UKA": 7500,   "UKA|WIL": 7500,   // KES 7,500–11,000 → 7500
+        "WIL|GGM": 6799,   "GGM|WIL": 6799,   // KES 6,500–8,500  → 6799 (-1 vs WIL|MBA 6500? no clash; -1 vs WIL|MYD 7200? no; set 6799 to differ from WIL|MBA 6500 & WIL|EDL 6800)
+        "WIL|KTL": 7199,   "KTL|WIL": 7199,   // KES 7,000–9,000  → 7199 (differs from WIL|MYD 7200 & WIL|UKA 7500)
+
+        // ── Nairobi JKIA (NBO) departures ──
+        "NBO|MBA": 7300,   "MBA|NBO": 7300,   // KES 7,000–9,900  → 7300 (differs from WIL|MBA 6500)
+        "NBO|EDL": 7499,   "EDL|NBO": 7499,   // KES 7,000–9,500  → 7499 (differs from NBO|MBA 7300 & WIL|EDL 6800)
+        "NBO|LOK": 10200,  "LOK|NBO": 10200,  // KES 10,000–14,500→ 10200 (differs from WIL|LOK 9500)
+        "NBO|MYD": 7699,   "MYD|NBO": 7699,   // KES 7,000–9,500  → 7699 (differs from WIL|MYD 7200 & NBO|MBA 7300 & NBO|EDL 7499)
+        "NBO|LAU": 9199,   "LAU|NBO": 9199,   // KES 8,500–12,000 → 9199 (differs from WIL|LAU 8800)
+        "NBO|UKA": 7999,   "UKA|NBO": 7999,   // KES 7,500–11,000 → 7999 (differs from WIL|UKA 7500)
+
+        // ── Inter-regional & Coastal ──
+        "EDL|LOK": 7500,   "LOK|EDL": 7500,   // KES 7,500–10,500 → 7500 (differs from WIL|UKA 7500? same — subtract 1)
+        // ^ clash with WIL|UKA 7500 — adjust:
+        // override below via spread — handled by ordering (last key wins), so set inline:
+
+        "MBA|LAU": 7100,   "LAU|MBA": 7100,   // KES 6,000–8,500  → 7100 (differs from WIL|GGM 6799 & WIL|MBA 6500)
+        "MYD|LAU": 6499,   "LAU|MYD": 6499,   // KES 5,500–7,500  → 6499 (differs from WIL|MBA 6500 by 1)
+
+        // ── International ──
+        "NBO|ZNZ": 11500,  "ZNZ|NBO": 11500,
+        "WIL|ZNZ": 11499,  "ZNZ|WIL": 11499,  // -1 vs NBO|ZNZ
+        "NBO|KGL": 12500,  "KGL|NBO": 12500,
+        "WIL|KGL": 12499,  "KGL|WIL": 12499,  // -1 vs NBO|KGL
+        "NBO|DAR": 13500,  "DAR|NBO": 13500,
+        "NBO|EBB": 12200,  "EBB|NBO": 12200,
+        "NBO|ADD": 15000,  "ADD|NBO": 15000,
+
+        // ── Kisumu ──
+        "WIL|KIS": 7198,   "KIS|WIL": 7198,   // differs from WIL|KTL 7199 by 1
+        "NBO|KIS": 7698,   "KIS|NBO": 7698,   // differs from NBO|MYD 7699 by 1
+    };
+
+    // Fix EDL|LOK clash with WIL|UKA (both would be 7500) — use 7501
+    routeFares["EDL|LOK"] = 7501;
+    routeFares["LOK|EDL"] = 7501;
+
+    // Cabin multipliers on top of Economy base
+    const cabinMult = { "Economy": 1, "Premium Economy": 1.35, "Business": 1.85, "First Class": 2.5 };
+
+    function extractCode(str) {
+        const m = str.match(/\(([A-Z]{2,3})\)/);
+        return m ? m[1] : "";
+    }
+
+    function getRouteFare() {
+        const fromCode = extractCode(document.getElementById("fromAirport").value);
+        const toCode   = extractCode(document.getElementById("toAirport").value);
+        const key = fromCode + "|" + toCode;
+        return routeFares[key] || 7500; // fallback
+    }
+
     function updateFare() {
         const cabin = document.getElementById("cabin").value;
-        const total = (fareBase[cabin] || 5500) * passengers;
+        const base  = getRouteFare();
+        const mult  = cabinMult[cabin] || 1;
+        const total = Math.round(base * mult) * passengers;
         document.getElementById("estimatedFare").textContent =
             "KES " + total.toLocaleString();
     }
+
+    // Re-calculate whenever route changes too
+    document.getElementById("fromAirport").addEventListener("input", updateFare);
+    document.getElementById("toAirport").addEventListener("input",   updateFare);
     document.getElementById("cabin").addEventListener("change", updateFare);
     updateFare();
 
@@ -572,7 +641,7 @@
         return dt.toLocaleDateString("en-KE", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
     }
 
-    /* ── Form submit ── */
+    /* ── Form submit → WhatsApp redirect ── */
     document.getElementById("bookingForm").addEventListener("submit", function(e) {
         e.preventDefault();
 
@@ -585,16 +654,16 @@
         if (!lastName)  { alert("Please enter your last name."); return; }
         if (!phone)     { alert("Please enter your phone number."); return; }
 
-        const tripType = document.getElementById("tripType").value;
-        const cabin    = document.getElementById("cabin").value;
-        const from     = document.getElementById("fromAirport").value.trim();
-        const to       = document.getElementById("toAirport").value.trim();
-        const dep      = document.getElementById("departureDate").value;
-        const ret      = document.getElementById("returnDate").value;
-        const promo    = document.getElementById("promoCode").value.trim();
-        const fare     = document.getElementById("estimatedFare").textContent;
+        const tripType   = document.getElementById("tripType").value;
+        const cabin      = document.getElementById("cabin").value;
+        const from       = document.getElementById("fromAirport").value.trim();
+        const to         = document.getElementById("toAirport").value.trim();
+        const dep        = document.getElementById("departureDate").value;
+        const ret        = document.getElementById("returnDate").value;
+        const promo      = document.getElementById("promoCode").value.trim();
+        const fare       = document.getElementById("estimatedFare").textContent;
 
-        /* Build booking message */
+        /* Build the WhatsApp message */
         let msg = `✈️ *SKYWARD AIRLINES — FLIGHT BOOKING REQUEST*\n\n`;
         msg += `👤 *Passenger Details*\n`;
         msg += `• Name: ${firstName} ${lastName}\n`;
@@ -609,30 +678,17 @@
         msg += `• Passengers: ${passengers}\n`;
         msg += `• Estimated Fare: ${fare}\n`;
         if (promo) msg += `• Promo Code: ${promo}\n`;
-        msg += `\n_Sent via Skyward Airlines online booking._`;
+        msg += `\n_Sent via Skyward Airlines online booking form._`;
 
-        /* Silently send booking in background */
         const encoded = encodeURIComponent(msg);
-        window.open(`https://wa.me/${RESERVATIONS}?text=${encoded}`, "_blank");
+        const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
 
         /* Update step indicator */
         document.getElementById("step2-indicator").classList.replace("active","done");
         document.getElementById("step3-indicator").classList.add("active");
 
-        /* Show clean confirmation to user */
-        document.getElementById("step2").innerHTML = `
-            <div style="text-align:center;padding:60px 20px;">
-                <div style="font-size:64px;margin-bottom:20px;">✅</div>
-                <h2 style="color:#06264d;font-size:28px;margin-bottom:12px;">Booking Request Received!</h2>
-                <p style="color:#666;font-size:16px;max-width:480px;margin:0 auto 30px;">
-                    Thank you, <strong>${firstName}</strong>! Your request for
-                    <strong>${from} → ${to}</strong> on <strong>${formatDate(dep)}</strong> has been received.<br><br>
-                    Our reservations team will contact you on <strong>${phone}</strong> shortly
-                    to confirm your flight and provide payment instructions.
-                </p>
-                <a href="index.html" class="button" style="font-size:16px;padding:14px 40px;">← Back to Home</a>
-            </div>
-        `;
+        /* Open WhatsApp */
+        window.open(url, "_blank");
     });
     </script>
 
